@@ -1,13 +1,18 @@
 import java.io.{BufferedReader, PrintStream}
 
 object KeyServer {
+  val secret: Double = 3
+
   val handleConnection = (is: BufferedReader, os: PrintStream) => {
-    os.println("Hello!")
+    val APublic = Utils.generatePublicKey(secret)
+    os.println(APublic)
     os.flush()
-    while (true) {
-      val task: String = is.readLine()
-      println(task)
-    }
+
+    val BPublic = is.readLine().toDouble
+    println(BPublic)
+
+    val sessionKey = Utils.generatePublicKey(secret, BPublic)
+    println(sessionKey)
   }
 
   def main(args: Array[String]) {

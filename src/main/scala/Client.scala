@@ -1,16 +1,21 @@
 import java.net.Socket
 
 object Client {
+  val secret: Double = 5
+
   def main(args: Array[String]) {
     val keyServerSocket = new Socket("localhost", 3456)
     try {
       val (is, os) = Utils.generateStreams(keyServerSocket)
-      while (true) {
-        if(is.ready()) {
-          os.println(is.readLine())
-          Thread.sleep(3000)
-        }
-      }
+      val BPublic = is.readLine().toDouble
+      println(BPublic)
+
+      val APublic = Utils.generatePublicKey(secret)
+      os.println(APublic)
+      os.flush()
+
+      val sessionKey = Utils.generatePublicKey(secret, BPublic)
+      println(sessionKey)
     } finally {
       keyServerSocket.close()
     }
