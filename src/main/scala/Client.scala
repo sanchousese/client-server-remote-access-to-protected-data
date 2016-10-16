@@ -7,14 +7,8 @@ object Client {
     val keyServerSocket = new Socket("localhost", 3456)
     try {
       val (is, os) = Utils.generateStreams(keyServerSocket)
-      val BPublic = is.readLine().toDouble
-      println(BPublic)
 
-      val APublic = Utils.generatePublicKey(secret)
-      os.println(APublic)
-      os.flush()
-
-      val sessionKey = Utils.generatePublicKey(secret, BPublic)
+      val sessionKey = Utils.handShake(secret, is, os)
       println(sessionKey)
     } finally {
       keyServerSocket.close()
