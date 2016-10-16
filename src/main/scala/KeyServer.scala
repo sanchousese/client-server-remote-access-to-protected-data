@@ -4,7 +4,14 @@ object KeyServer {
   val secret: Double = 3
 
   val handleConnection = (is: BufferedReader, os: PrintStream) => {
-    val sessionKey = Utils.handShake(secret, is, os)
+    val BPublic = is.readLine().toDouble
+    println(BPublic)
+
+    val APublic = Utils.generatePublicKey(secret)
+    os.println(APublic)
+    os.flush()
+
+    val sessionKey = Utils.generatePublicKey(secret, BPublic)
     println(sessionKey)
   }
 
