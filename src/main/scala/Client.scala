@@ -21,12 +21,26 @@ object Client {
           .replace(s"|$request", "")
           .replace(s"|$randomNumber", "")
 
+      println("requestToB: " + requestToB)
+      val sessionKey = requestToB.split("\\|").head.toDouble
+
       val (isS, osS) = generateStreams(targetServerSocket)
       osS.println(requestToB)
       osS.flush()
 
-      val serverResponse = isS.readLine()
-      println(serverResponse)
+      val targetResponse = isS.readLine()
+      println(decrypt(sessionKey, targetResponse))
+      decrypt(sessionKey, targetResponse).split("\\|").toList match {
+        case randomTargetNumber :: targetName :: Nil if targetName == "B" =>
+          osS.println(encrypt(sessionKey, (randomTargetNumber.toDouble + 100).toString))
+          osS.flush()
+        case _ =>
+          osS.println("Error! Something goes wrong!")
+          osS.flush()
+      }
+
+      val targetConnectionStatus = isS.readLine()
+      println(targetConnectionStatus)
 
     } finally {
       keyServerSocket.close()

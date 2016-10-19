@@ -6,13 +6,28 @@ object Server {
 
   val handleConnection = (is: BufferedReader, os: PrintStream) => {
     val clientRequest = is.readLine()
-    clientRequest.split("\\|").toList match {
-      case sessionKey :: encryptedMessage :: Nil =>
-        os.println(s"$sessionKey -> ${decrypt(masterKey, encryptedMessage)}")
-        os.flush()
-      case _ =>
-        os.println("Match error, please send message with format: [client_name]|[target_name]|[random_number]")
-        os.flush()
+    val randValue = generateRandomKey
+    val sessionKey: Double =
+      clientRequest.split("\\|").toList match {
+        case sesKey :: encryptedMessage :: Nil =>
+
+          os.println(encrypt(sesKey.toDouble, s"$randValue|B"))
+          os.flush()
+          sesKey.toDouble
+        case _ =>
+          os.println("Match error, please send message with format: [client_name]|[target_name]|[random_number]")
+          os.flush()
+          -1
+      }
+
+    val secondRequest = is.readLine()
+    val randomValueWithFunc = decrypt(sessionKey, secondRequest).toDouble
+    if (randomValueWithFunc == randValue + 100) {
+      os.println("connection esstablished")
+      os.flush()
+    } else {
+      os.println("connection refused")
+      os.flush()
     }
   }
 
