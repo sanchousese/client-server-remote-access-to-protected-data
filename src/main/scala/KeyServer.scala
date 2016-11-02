@@ -1,10 +1,12 @@
 import java.io.{BufferedReader, PrintStream}
+import java.net.Socket
+
 import Utils._
 
 object KeyServer {
   val partsKeys = Map("A" -> 15, "B" -> 13)
 
-  val handleConnection = (is: BufferedReader, os: PrintStream) => {
+  val handleConnection = (socket: Socket, is: BufferedReader, os: PrintStream) => {
     val clientRequest = is.readLine()
     clientRequest.split("\\|").toList match {
       case clientName :: targetName :: clientNumber :: Nil =>

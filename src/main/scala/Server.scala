@@ -1,10 +1,14 @@
 import java.io.{BufferedReader, PrintStream}
+import java.net.Socket
+import java.nio.file.{Files, Paths}
+
 import Utils._
+import sun.misc.IOUtils
 
 object Server {
   val masterKey: Double = 13
 
-  val handleConnection = (is: BufferedReader, os: PrintStream) => {
+  val handleConnection = (socket: Socket, is: BufferedReader, os: PrintStream) => {
     val clientRequest = is.readLine()
     val randValue = generateRandomKey
     val sessionKey: Double =
@@ -23,8 +27,10 @@ object Server {
     val secondRequest = is.readLine()
     val randomValueWithFunc = decrypt(sessionKey, secondRequest).toDouble
     if (randomValueWithFunc == randValue + 100) {
-      os.println("connection esstablished")
+      os.println("connection established")
       os.flush()
+//      IOUtils.readFully()
+      Files.copy(socket.getInputStream, Paths.get("test1.png"))
     } else {
       os.println("connection refused")
       os.flush()

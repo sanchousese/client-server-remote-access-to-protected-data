@@ -1,8 +1,19 @@
+import java.io.PrintStream
 import java.net.Socket
+import java.nio.file.{Files, Paths}
+
 import Utils._
 
 object Client {
   val masterKey: Double = 15
+
+  def sendFile(os: PrintStream) = {
+    val bytes =
+      Files.readAllBytes(Paths.get("Blank-009267-1024-x-1024-Stripes.png"))
+
+    os.write(bytes, 0, bytes.length)
+    os.flush()
+  }
 
   def main(args: Array[String]) {
     val keyServerSocket = new Socket("localhost", 3456)
@@ -40,6 +51,9 @@ object Client {
       }
 
       val targetConnectionStatus = isS.readLine()
+      if (targetConnectionStatus == "connection established") {
+        sendFile(osS)
+      }
       println(targetConnectionStatus)
 
     } finally {
