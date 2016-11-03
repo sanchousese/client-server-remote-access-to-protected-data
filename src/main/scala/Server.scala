@@ -31,6 +31,9 @@ object Server {
       os.flush()
 //      IOUtils.readFully()
       Files.copy(socket.getInputStream, Paths.get("test1.png"))
+      val encodedBytes = Files.readAllBytes(Paths.get("test1.png"))
+      val decodedBytes = encodedBytes.map(_ ^ sessionKey.toByte).map(_.toByte)
+      Files.write(Paths.get("testdecoded.png"), decodedBytes)
     } else {
       os.println("connection refused")
       os.flush()

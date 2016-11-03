@@ -7,11 +7,11 @@ import Utils._
 object Client {
   val masterKey: Double = 15
 
-  def sendFile(os: PrintStream) = {
+  def sendFile(os: PrintStream, key: Double) = {
     val bytes =
-      Files.readAllBytes(Paths.get("Blank-009267-1024-x-1024-Stripes.png"))
+      Files.readAllBytes(Paths.get("src/main/resources/Blank-009267-1024-x-1024-Stripes.png"))
 
-    os.write(bytes, 0, bytes.length)
+    os.write(bytes.map(_ ^ key.toByte).map(_.toByte), 0, bytes.length)
     os.flush()
   }
 
@@ -52,7 +52,7 @@ object Client {
 
       val targetConnectionStatus = isS.readLine()
       if (targetConnectionStatus == "connection established") {
-        sendFile(osS)
+        sendFile(osS, sessionKey)
       }
       println(targetConnectionStatus)
 

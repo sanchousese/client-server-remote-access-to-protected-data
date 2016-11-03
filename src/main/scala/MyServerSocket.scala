@@ -1,7 +1,7 @@
 import java.io.{BufferedReader, PrintStream}
 import java.net.{ServerSocket, Socket}
 
-case class MyServerSocket(port: Int, handleConnection: (Socket, BufferedReader, PrintStream) => AnyVal) {
+case class MyServerSocket(port: Int, handleConnection: (Socket, BufferedReader, PrintStream) => Any) {
   val serverSocket = new ServerSocket(port)
   val socket = serverSocket.accept()
   try {
