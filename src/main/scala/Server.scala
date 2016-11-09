@@ -29,7 +29,8 @@ object Server {
     if (randomValueWithFunc == randValue + 100) {
       os.println("connection established")
       os.flush()
-//      IOUtils.readFully()
+      Files.deleteIfExists(Paths.get("test1.png"))
+      Files.deleteIfExists(Paths.get("testdecoded.png"))
       Files.copy(socket.getInputStream, Paths.get("test1.png"))
       val encodedBytes = Files.readAllBytes(Paths.get("test1.png"))
       val decodedBytes = encodedBytes.map(_ ^ sessionKey.toByte).map(_.toByte)
