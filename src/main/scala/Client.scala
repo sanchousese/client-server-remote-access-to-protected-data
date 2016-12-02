@@ -51,10 +51,17 @@ object Client {
       }
 
       val targetConnectionStatus = isS.readLine()
+      println(targetConnectionStatus)
       if (targetConnectionStatus == "connection established") {
+        osS.println("help")
+        osS.flush()
+        println(isS.readLine())
+
+        osS.println("file")
+        osS.flush()
+        println(isS.readLine())
         sendFile(osS, sessionKey)
       }
-      println(targetConnectionStatus)
 
     } finally {
       keyServerSocket.close()

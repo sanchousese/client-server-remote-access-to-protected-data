@@ -20,6 +20,7 @@ object KeyServer {
             s"|$clientRequest" +
             s"|$clientNumber" +
             s"|${encrypt(partsKeys(targetName), s"$sessionKey|$clientName")}")
+          println(response)
           os.println(response)
           os.flush()
         }
