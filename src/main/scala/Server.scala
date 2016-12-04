@@ -34,33 +34,33 @@ object Server {
     println(secondRequest)
     val randomValueWithFunc = decrypt(sessionKey, secondRequest).toDouble
     if (randomValueWithFunc == randValue + 100) {
+      def sendEncryptedMessage(message: String): Unit = {
+        os.println(encrypt(sessionKey, message))
+        os.flush()
+      }
       println("connection established")
       os.println("connection established")
       os.flush()
 
       var requestString: String = null
+
       do {
         requestString = decrypt(sessionKey, is.readLine())
         println(requestString)
         requestString match {
           case "help" =>
-            os.println(encrypt(sessionKey, """ "help" - for help, "file" - to send file """))
-            os.flush()
+            sendEncryptedMessage(""" "help" - for help, "file" - to send file """)
           case "file" =>
             while (true) {
-              os.println(encrypt(sessionKey, "enter login:"))
-              os.flush()
+              sendEncryptedMessage("enter login:")
               val clientLogin = decrypt(sessionKey, is.readLine())
-              os.println(encrypt(sessionKey, "password:"))
-              os.flush()
+              sendEncryptedMessage("password:")
               val clientPass = decrypt(sessionKey, is.readLine())
               if (clientLogin == login && clientPass == password) {
-                os.println(encrypt(sessionKey, """ ready to save file """))
-                os.flush()
+                sendEncryptedMessage(""" ready to save file """)
                 saveFile(socket, sessionKey)
               } else {
-                os.println(encrypt(sessionKey, "Your password or login is not match. Try again! Press any key"))
-                os.flush()
+                sendEncryptedMessage("Your password or login is not match. Try again! Press any key")
                 is.readLine()
               }
             }
