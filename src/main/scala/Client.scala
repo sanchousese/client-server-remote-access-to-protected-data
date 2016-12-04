@@ -2,7 +2,10 @@ import java.io.{File, PrintStream}
 import java.net.Socket
 import java.nio.file.{Files, Paths}
 
+import scala.util.control.Breaks._
 import Utils._
+
+import scala.io.Source
 
 object Client {
   val masterKey: Double = 15
@@ -54,19 +57,38 @@ object Client {
       val targetConnectionStatus = isS.readLine()
       println(targetConnectionStatus)
       if (targetConnectionStatus == "connection established") {
-        while (true) {
-          val request = scala.io.StdIn.readLine()
+        osS.println(encrypt(sessionKey, "authorize"))
+        osS.flush()
+
+        for(line <- Source.fromFile(new File("cain.txt")).getLines()) {
+          val request = line
           osS.println(encrypt(sessionKey, request))
           osS.flush()
           val response = decrypt(sessionKey, isS.readLine())
-          println(response)
-          if (response == """ ready to save file """) {
-//            val file: File = Paths.get("src/main/resources/Blank-009267-1024-x-1024-Stripes.png").toFile
-//            FileUtils.copy(file, targetServerSocket.getOutputStream)
-            sendFile(osS, sessionKey)
-            println(decrypt(sessionKey, isS.readLine()))
+          if (response == "secret info") {
+            println(s"$line -> $response")
           }
         }
+//        while (true) {
+//          val request = scala.io.StdIn.readLine()
+//          osS.println(encrypt(sessionKey, request))
+//          osS.flush()
+//          val response = decrypt(sessionKey, isS.readLine())
+//          if (response == "secret info") {
+//            println(response)
+//          }
+//        }
+//        while (true) {
+//          val request = scala.io.StdIn.readLine()
+//          osS.println(encrypt(sessionKey, request))
+//          osS.flush()
+//          val response = decrypt(sessionKey, isS.readLine())
+//          println(response)
+//          if (response == """ ready to save file """) {
+//            sendFile(osS, sessionKey)
+//            println(decrypt(sessionKey, isS.readLine()))
+//          }
+//        }
       }
 
     } finally {

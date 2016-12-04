@@ -4,14 +4,14 @@ import java.nio.file.{Files, Paths}
 
 import Utils._
 import sun.misc.IOUtils
-import scala.util.control.Breaks._
+
 
 object Server {
   val masterKey: Double = 13
   val BUFFER_SIZE       = 8192
 
   val login             = "test"
-  val password          = "demodemo1234"
+  val password          = "zoppico"
 
   val handleConnection = (socket: Socket, is: BufferedReader, os: PrintStream) => {
     val clientRequest = is.readLine()
@@ -50,6 +50,15 @@ object Server {
         requestString match {
           case "help" =>
             sendEncryptedMessage(""" "help" - for help, "file" - to send file """)
+          case "authorize" =>
+            while (true) {
+              val clientPass = decrypt(sessionKey, is.readLine())
+              if (clientPass == password) {
+                sendEncryptedMessage("secret info")
+              } else {
+                sendEncryptedMessage("Your password or login is not match. Try again! Press any key")
+              }
+            }
           case "file" =>
             while (true) {
               sendEncryptedMessage("enter login:")
