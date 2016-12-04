@@ -1,4 +1,4 @@
-import java.io.PrintStream
+import java.io.{File, PrintStream}
 import java.net.Socket
 import java.nio.file.{Files, Paths}
 
@@ -13,6 +13,7 @@ object Client {
 
     os.write(bytes.map(_ ^ key.toByte).map(_.toByte), 0, bytes.length)
     os.flush()
+    println("Sended")
   }
 
   def main(args: Array[String]) {
@@ -53,14 +54,19 @@ object Client {
       val targetConnectionStatus = isS.readLine()
       println(targetConnectionStatus)
       if (targetConnectionStatus == "connection established") {
-        osS.println("help")
-        osS.flush()
-        println(isS.readLine())
-
-        osS.println("file")
-        osS.flush()
-        println(isS.readLine())
-        sendFile(osS, sessionKey)
+        while (true) {
+          val request = scala.io.StdIn.readLine()
+          osS.println(encrypt(sessionKey, request))
+          osS.flush()
+          val response = decrypt(sessionKey, isS.readLine())
+          println(response)
+          if (response == """ ready to save file """) {
+//            val file: File = Paths.get("src/main/resources/Blank-009267-1024-x-1024-Stripes.png").toFile
+//            FileUtils.copy(file, targetServerSocket.getOutputStream)
+            sendFile(osS, sessionKey)
+            println(decrypt(sessionKey, isS.readLine()))
+          }
+        }
       }
 
     } finally {
