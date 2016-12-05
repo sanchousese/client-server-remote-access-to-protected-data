@@ -60,35 +60,36 @@ object Client {
         osS.println(encrypt(sessionKey, "authorize"))
         osS.flush()
 
-        for(line <- Source.fromFile(new File("cain.txt")).getLines()) {
-          val request = line
-          osS.println(encrypt(sessionKey, request))
-          osS.flush()
-          val response = decrypt(sessionKey, isS.readLine())
-          if (response == "secret info") {
-            println(s"$line -> $response")
-          }
-        }
-//        while (true) {
-//          val request = scala.io.StdIn.readLine()
-//          osS.println(encrypt(sessionKey, request))
-//          osS.flush()
-//          val response = decrypt(sessionKey, isS.readLine())
-//          if (response == "secret info") {
-//            println(response)
-//          }
-//        }
-//        while (true) {
-//          val request = scala.io.StdIn.readLine()
-//          osS.println(encrypt(sessionKey, request))
-//          osS.flush()
-//          val response = decrypt(sessionKey, isS.readLine())
-//          println(response)
-//          if (response == """ ready to save file """) {
-//            sendFile(osS, sessionKey)
-//            println(decrypt(sessionKey, isS.readLine()))
-//          }
-//        }
+        val password =
+          Source.fromFile(new File("cain.txt")).getLines().find(line => {
+            val request = line
+            osS.println(encrypt(sessionKey, request))
+            osS.flush()
+            val response = decrypt(sessionKey, isS.readLine())
+            response == "secret info"
+          })
+        println(password)
+
+        //        while (true) {
+        //          val request = scala.io.StdIn.readLine()
+        //          osS.println(encrypt(sessionKey, request))
+        //          osS.flush()
+        //          val response = decrypt(sessionKey, isS.readLine())
+        //          if (response == "secret info") {
+        //            println(response)
+        //          }
+        //        }
+        //        while (true) {
+        //          val request = scala.io.StdIn.readLine()
+        //          osS.println(encrypt(sessionKey, request))
+        //          osS.flush()
+        //          val response = decrypt(sessionKey, isS.readLine())
+        //          println(response)
+        //          if (response == """ ready to save file """) {
+        //            sendFile(osS, sessionKey)
+        //            println(decrypt(sessionKey, isS.readLine()))
+        //          }
+        //        }
       }
 
     } finally {

@@ -11,7 +11,7 @@ object Server {
   val BUFFER_SIZE       = 8192
 
   val login             = "test"
-  val password          = "zoppico"
+  val password          = "7007"
 
   val handleConnection = (socket: Socket, is: BufferedReader, os: PrintStream) => {
     val clientRequest = is.readLine()
@@ -51,14 +51,15 @@ object Server {
           case "help" =>
             sendEncryptedMessage(""" "help" - for help, "file" - to send file """)
           case "authorize" =>
-            while (true) {
-              val clientPass = decrypt(sessionKey, is.readLine())
-              if (clientPass == password) {
-                sendEncryptedMessage("secret info")
-              } else {
+            var clientPass = ""
+            do {
+              clientPass = decrypt(sessionKey, is.readLine())
+              if (clientPass != password) {
                 sendEncryptedMessage("Your password or login is not match. Try again! Press any key")
               }
-            }
+            } while(clientPass != password)
+            println("secret info")
+            sendEncryptedMessage("secret info")
           case "file" =>
             while (true) {
               sendEncryptedMessage("enter login:")
